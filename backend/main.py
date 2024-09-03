@@ -22,7 +22,7 @@ async def on_message(message):
     if message.author == client.user:
         return
     
-    if message.content.startswith('!'):
+    if message.content.startswith('$'):
         text = message.content[1:]
         response = pipe(text, max_length=15)[0]['generated_text']
 
