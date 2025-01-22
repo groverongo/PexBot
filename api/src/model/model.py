@@ -15,9 +15,6 @@ class Text_Generator_Meta(type):
 class Text_Generator(metaclass=Text_Generator_Meta):
     def __init__(self):
         self.device = 0 if torch.cuda.is_available() else -1
-        print(f"Using model: {MODEL_NAME}")
-        print(f"Using {MODEL_TASK}")
-
         self.text_generator = pipeline(MODEL_TASK, model=MODEL_NAME, device=self.device)
     
     def generate_text(self, text:  str, max_length: int):

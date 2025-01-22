@@ -21,5 +21,5 @@ build-backend = "poetry.core.masonry.api"
 package-mode = false
 
 [tool.poe.tasks]
-start = "fastapi run src/main.py"
-"start:dev" = "fastapi dev src/main.py"
+start = "poetry run fastapi run src/main.py"
+"start:dev" = "poetry run fastapi dev src/main.py"

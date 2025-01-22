@@ -13,5 +13,5 @@ async def status():
 @app.post("/generate")
 async def generate_text(request: Request):
     data = await request.json()
-    response = Text_Generator().generate_text(data.text, data.max_length)
+    response = Text_Generator().generate_text(data['text'], data['max_length'])
     return {"response": response}
