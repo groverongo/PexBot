@@ -2,6 +2,9 @@ import discord
 from transformers import pipeline
 import torch
 import os
+from dotenv import load_dotenv
+
+load_dotenv()
 os.environ['HF_HOME'] = './models'
 
 device = 0 if torch.cuda.is_available() else -1
@@ -31,5 +34,6 @@ async def on_message(message):
             response = response[len(text):]
 
         await message.channel.send(response)
+
 
 client.run(os.getenv('DISCORD_TOKEN'))
