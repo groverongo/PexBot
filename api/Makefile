@@ -16,3 +16,6 @@ export:
 
 build\:docker:
 	docker build -t $(DOCKER_IMAGE_NAME) --build-arg CONDA_ENV_NAME=$(ENV_NAME) . 
+
+run\:docker:
+	docker run -d -p 8000:8000 --env-file .env $(DOCKER_IMAGE_NAME)
