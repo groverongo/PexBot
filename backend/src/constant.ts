@@ -8,6 +8,10 @@ export const DISCORD_TOKEN: string = process.env.DISCORD_TOKEN as string;
 export const MODEL_ENDPOINT: string = process.env.MODEL_ENDPOINT as string;
 
 export const client = new Client({ intents: [
-    GatewayIntentBits.Guilds, GatewayIntentBits.MessageContent,
-    GatewayIntentBits.GuildMessages, GatewayIntentBits.GuildMessageTyping
+    GatewayIntentBits.Guilds, 
+    GatewayIntentBits.MessageContent,
+    GatewayIntentBits.GuildMessages, 
+    GatewayIntentBits.GuildMessageTyping,
+    GatewayIntentBits.GuildVoiceStates,
+    GatewayIntentBits.GuildMembers,
 ]});

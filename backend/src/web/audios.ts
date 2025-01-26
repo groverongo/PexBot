@@ -1,4 +1,4 @@
-import { AudioResource, createAudioPlayer, createAudioResource, joinVoiceChannel, NoSubscriberBehavior } from "@discordjs/voice";
+import { AudioPlayerStatus, AudioResource, createAudioPlayer, createAudioResource, joinVoiceChannel, NoSubscriberBehavior } from "@discordjs/voice";
 import { Message, OmitPartialGroupDMChannel } from "discord.js";
 import path from "path";
 import { ANTHEMS_PATH } from "../constant";
@@ -19,12 +19,18 @@ export const joinUserChannel = (message: OmitPartialGroupDMChannel<Message<boole
         guildId: message.guildId as string,
         adapterCreator: message.guild?.voiceAdapterCreator as any
     });
+    const resource = createAudioResource(path.join(ANTHEMS_PATH, "pop-1.mp3"));
+    
     connection.subscribe(audioPlayer);
-    audioPlayer.on("stateChange", (oldState, newState) => {
-        if(newState.status === "idle") {
-            connection.destroy();
-            audioPlayer.stop();
-        }
+    audioPlayer.play(resource)
+
+    audioPlayer.on(AudioPlayerStatus.Playing, () => {
+        console.log('The audio player has started playing!');
+    });
+    audioPlayer.on(AudioPlayerStatus.Idle, () => {
+        console.log('The audio player has finished playing and has been idle.');
+        connection.destroy();
+        audioPlayer.stop();
     });
     audioPlayer.on("error", (error) => {
         console.error(error);
