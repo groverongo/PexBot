@@ -17,6 +17,8 @@ services:
     env_file: ./backend/.env
     networks:
       - default
+    depends_on:
+      - api
     
 networks:
   default:
