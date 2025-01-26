@@ -7,8 +7,10 @@ export const client = new Client({ intents: [
   GatewayIntentBits.GuildMessages, GatewayIntentBits.GuildMessageTyping
 ]});
 
-client.on("ready", () => {
+client.on("ready", async () => {
     console.log(`Logged in as ${client.user?.tag}!`);
+    const request = new ModelRequest();
+    await request.pingModel();
 });
 
 client.on("messageCreate", async (message) => {
