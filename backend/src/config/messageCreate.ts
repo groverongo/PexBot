@@ -1,9 +1,7 @@
-import { AudioResource, createAudioResource } from "@discordjs/voice";
-import { ANTHEMS_PATH, client } from "../constant";
+import { client } from "../constant";
 import { ModelRequest } from "../web/request.";
-import { ANTHEMS_PATHS, joinUserChannel } from "../web/audios";
-import path from 'path';
 import { Message, OmitPartialGroupDMChannel } from "discord.js";
+import { playAnthem } from "../web/audios";
 
 const messageCreate = async (message: OmitPartialGroupDMChannel<Message<boolean>>) =>  {
     const authorId: string = message.author.id;
@@ -34,8 +32,7 @@ const messageCreate = async (message: OmitPartialGroupDMChannel<Message<boolean>
             break;
         case "!a":
             console.log("Anthem command received.");
-            const player = joinUserChannel(message);
-            // player.play(createAudioResource(path.join(ANTHEMS_PATH, "pop-1.mp3")))
+            const player = playAnthem(message);
             break;
     }
 

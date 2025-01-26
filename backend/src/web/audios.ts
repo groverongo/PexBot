@@ -3,12 +3,9 @@ import { Message, OmitPartialGroupDMChannel } from "discord.js";
 import path from "path";
 import { ANTHEMS_PATH } from "../constant";
 
-export const ANTHEMS_PATHS: Record<string, AudioResource> = {
-    "pop-1": createAudioResource(path.join(ANTHEMS_PATH, "pop-1.mp3")),
-    "rock-1": createAudioResource(path.join(ANTHEMS_PATH, "rock-1.mp3")),
-}
+const createAnthemResource = (anthem: string): AudioResource => createAnthemResource(path.join(ANTHEMS_PATH, `${anthem}.mp3`));
 
-export const joinUserChannel = (message: OmitPartialGroupDMChannel<Message<boolean>>) => {
+export const playAnthem = (message: OmitPartialGroupDMChannel<Message<boolean>>) => {
     const audioPlayer = createAudioPlayer({
         behaviors: {
             noSubscriber: NoSubscriberBehavior.Pause
@@ -19,10 +16,11 @@ export const joinUserChannel = (message: OmitPartialGroupDMChannel<Message<boole
         guildId: message.guildId as string,
         adapterCreator: message.guild?.voiceAdapterCreator as any
     });
-    const resource = createAudioResource(path.join(ANTHEMS_PATH, "pop-1.mp3"));
-    
+
     connection.subscribe(audioPlayer);
-    audioPlayer.play(resource)
+
+    const anthem = message.content.split(" ")[1];
+    audioPlayer.play(createAnthemResource(anthem));
 
     audioPlayer.on(AudioPlayerStatus.Playing, () => {
         console.log('The audio player has started playing!');
