@@ -1,7 +1,7 @@
 import { client } from "../constant";
 import { ModelRequest } from "../web/request.";
 
-client.on("ready", async () => {
+const ready = async () => {
     console.log(`Logged in as ${client.user?.tag}!`);
     const request = new ModelRequest();
     try{
@@ -9,4 +9,6 @@ client.on("ready", async () => {
     } catch(e) {
         console.error("Model API is not available.");
     }
-});
+}
+
+export default ready;
