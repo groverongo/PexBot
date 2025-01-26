@@ -5,6 +5,7 @@
   "author": "groverongo",
   "license": "MIT",
   "dependencies": {
+    "@discordjs/voice": "^0.18.0",
     "axios": "^1.7.9",
     "discord.js": "^14.17.3",
     "nodemon": "^3.1.9",
@@ -21,6 +22,6 @@
     "clean": "rimraf dist",
     "prestart": "yarn run clean && yarn run build",
     "start": "node dist/main.js",
-    "start:dev": "dotenv nodemon src/main.ts"
+    "start:dev": "dotenv ts-node src/main.ts"
   }
 }
