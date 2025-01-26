@@ -3,8 +3,6 @@ import { Message, OmitPartialGroupDMChannel } from "discord.js";
 import path from "path";
 import { ANTHEMS_PATH } from "../constant";
 
-const createAnthemResource = (anthem: string): AudioResource => createAnthemResource(path.join(ANTHEMS_PATH, `${anthem}.mp3`));
-
 export const playAnthem = (message: OmitPartialGroupDMChannel<Message<boolean>>) => {
     const audioPlayer = createAudioPlayer({
         behaviors: {
@@ -20,7 +18,7 @@ export const playAnthem = (message: OmitPartialGroupDMChannel<Message<boolean>>)
     connection.subscribe(audioPlayer);
 
     const anthem = message.content.split(" ")[1];
-    audioPlayer.play(createAnthemResource(anthem));
+    audioPlayer.play(createAudioResource(path.join(ANTHEMS_PATH, `${anthem}.mp3`)));
 
     audioPlayer.on(AudioPlayerStatus.Playing, () => {
         console.log('The audio player has started playing!');
