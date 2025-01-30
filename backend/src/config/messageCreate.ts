@@ -2,6 +2,7 @@ import { client } from "../constant";
 import { ModelRequest } from "../web/request.";
 import { Message, OmitPartialGroupDMChannel } from "discord.js";
 import { playAnthem } from "../web/audios";
+import { listenVoice } from "../web/listen";
 
 const messageCreate = async (message: OmitPartialGroupDMChannel<Message<boolean>>) =>  {
     const authorId: string = message.author.id;
@@ -34,6 +35,10 @@ const messageCreate = async (message: OmitPartialGroupDMChannel<Message<boolean>
             console.log("Anthem command received.");
             const player = playAnthem(message);
             break;
+        case "!l":
+            console.log("Listen command received.");
+            listenVoice(message);
+            
     }
 
 }
