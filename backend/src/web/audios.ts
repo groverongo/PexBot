@@ -15,8 +15,6 @@ export const playAnthem = (message: OmitPartialGroupDMChannel<Message<boolean>>)
         adapterCreator: message.guild?.voiceAdapterCreator as any
     });
 
-    connection.subscribe(audioPlayer);
-
     const anthem = message.content.split(" ")[1];
     audioPlayer.play(createAudioResource(path.join(ANTHEMS_PATH, `${anthem}.mp3`)));
 
