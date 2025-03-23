@@ -1,31 +1,22 @@
-import { EndBehaviorType, joinVoiceChannel, VoiceConnectionStatus, VoiceReceiver } from "@discordjs/voice";
+import { EndBehaviorType, joinVoiceChannel, VoiceReceiver } from "@discordjs/voice";
 import { Message, OmitPartialGroupDMChannel } from "discord.js";
-import { client, DECODE_OPTIONS, OUT_DIRECTORY, TRANSCRIPTION_ENDPOINT } from "../constant";
+import { client, DECODE_OPTIONS, OUT_DIRECTORY } from "../constant";
 import { opus } from "prism-media";
-import {createReadStream, createWriteStream, fstat, promises} from 'fs';
+import { createWriteStream } from 'fs';
 import path from "path";
 import { randomUUID } from "crypto";
-import FormData from "form-data";
-import axios from "axios";
+import { TranscriptionRequest } from "./request.";
 
-const transcribe = async (audioFile: string): Promise<string> => {
-    const formData = new FormData();
-    formData.append("audio", createReadStream(path.join(OUT_DIRECTORY, audioFile)));
-
-    const response = await axios.post(TRANSCRIPTION_ENDPOINT, formData);
-    return response.data.transcript;
-}
-
-const voiceAudioStream = (receiver: VoiceReceiver, userId: string, outFile: string) => new Promise<void>((resolve, reject) => {
+const voiceAudioStream = (receiver: VoiceReceiver, userId: string, outPath: string) => new Promise<void>((resolve, reject) => {
     const receiveStream = receiver.subscribe(userId, {
         end: {
             behavior: EndBehaviorType.AfterSilence,
-            duration: 1000
+            duration: 3000
         }
     });
 
     const decoderObject = new opus.Decoder(DECODE_OPTIONS);
-    const writeStream = createWriteStream(path.join(OUT_DIRECTORY, outFile));
+    const writeStream = createWriteStream(outPath);
     receiveStream.pipe(decoderObject).pipe(writeStream);
 
     writeStream.on("finish", async () => {
@@ -48,20 +39,27 @@ export const listenVoice = (message: OmitPartialGroupDMChannel<Message<boolean>>
     const receiver = connection.receiver;
 
     let outPrefix: string;
+    let outPath: string;
     let audioPromise: Promise<void>;
 
     receiver.speaking.on('start', async (userId) => {
         if(userId === client.user?.id) return;
         console.log(`User ${userId} is speaking`);
-        outPrefix = randomUUID();
         if (userId === message.member?.id) {
-            audioPromise = voiceAudioStream(receiver, userId, `${outPrefix}.pcm`);
+            outPrefix = randomUUID();
+            outPath = path.join(OUT_DIRECTORY, `${outPrefix}.pcm`);
+            audioPromise = voiceAudioStream(receiver, userId, outPath);
         }
     });
 
     receiver.speaking.on("end", async (userId) => {
         console.log(`User ${userId} has stopped speaking.`);
-        await audioPromise;
-
+        if (userId === message.member?.id) {
+            await audioPromise;
+            const transcriptClient =  new TranscriptionRequest()
+            await transcriptClient.transcribe(outPath);
+    
+            console.log("User", userId, "said:",transcriptClient.response.response.text);
+        }
     });
 }

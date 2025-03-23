@@ -1,7 +1,9 @@
 import axios from "axios";
 import { ModelResponseSchema, ModelResponseType } from "../schema/model";
 import { MODEL_ENDPOINT, TRANSCRIPTION_ENDPOINT } from "../constant";
-import { TranscriptionResponseType } from "../schema/transcription";
+import { TranscriptionResponseSchema, TranscriptionResponseType } from "../schema/transcription";
+import FormData from "form-data";
+import { createReadStream } from 'fs';
 
 abstract class BaseServiceRequest<ResponseType>{
     private _response: ResponseType | null = null;
@@ -50,5 +52,16 @@ export class TranscriptionRequest extends BaseServiceRequest<TranscriptionRespon
 
     protected ENDPOINT: string = TRANSCRIPTION_ENDPOINT;
 
+    public transcribe = async (audioFilePath: string) => {
+        const formData = new FormData();
+        formData.append("audio", createReadStream(audioFilePath));
 
+        const response = await axios.post(`${this.ENDPOINT}/transcribe`, formData);
+        const data = TranscriptionResponseSchema.safeParse(response.data);
+        if(data.success) {
+            this.response = data.data;
+        } else {
+            throw new Error(data.error.message);
+        }
+    }
 }
