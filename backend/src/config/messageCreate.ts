@@ -26,7 +26,7 @@ const messageCreate = async (message: OmitPartialGroupDMChannel<Message<boolean>
             commandParts.shift();
             try{
                 await request.generateModel(commandParts.join(" "));
-                message.reply(request.getResponse().response);
+                message.reply(request.response.response);
             } catch (e) {
                 message.reply("Failed to generate response.");
             }

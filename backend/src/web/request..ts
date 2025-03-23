@@ -1,18 +1,36 @@
 import axios from "axios";
 import { ModelResponseSchema, ModelResponseType } from "../schema/model";
-import { MODEL_ENDPOINT } from "../constant";
+import { MODEL_ENDPOINT, TRANSCRIPTION_ENDPOINT } from "../constant";
+import { TranscriptionResponseType } from "../schema/transcription";
 
-export class ModelRequest {
-    private response: ModelResponseType | null = null;
+abstract class BaseServiceRequest<ResponseType>{
+    private _response: ResponseType | null = null;
+    protected abstract ENDPOINT: string;
 
-    public pingModel = async () => {
-        const response = await axios.get(`${MODEL_ENDPOINT}`);
+    public async pingService(): Promise<void> {
+        const response = await axios.get(`${this.ENDPOINT}`);
         console.log(response.data);
-    };
+    }
+
+    public get response(): ResponseType {
+        if (this._response === null) {
+            throw new Error("Response is null");
+        }
+        return this._response;
+    }
+
+    protected set response(response: ResponseType) {
+        this._response = response;
+    }
+};
+
+export class ModelRequest extends BaseServiceRequest<ModelResponseType> {
+
+    protected ENDPOINT: string = MODEL_ENDPOINT;
 
     public generateModel = async (content: string, maxLength=15) => {
         const response = await axios.post(
-            `${MODEL_ENDPOINT}/generate`, 
+            `${this.ENDPOINT}/generate`, 
             {
                 text: content,
                 max_length: maxLength,
@@ -26,12 +44,11 @@ export class ModelRequest {
             throw new Error(data.error.message);
         }
     };
+}
 
-    public getResponse = () => {
-        if (this.response === null) {
-            throw new Error("Response is null");
-        } else {
-            return this.response;
-        }
-    };
+export class TranscriptionRequest extends BaseServiceRequest<TranscriptionResponseType> {
+
+    protected ENDPOINT: string = TRANSCRIPTION_ENDPOINT;
+
+
 }
