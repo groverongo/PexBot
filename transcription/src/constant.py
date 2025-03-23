@@ -1,3 +1,6 @@
 from os import getcwd, path, getenv
+from tempfile import gettempdir
 
-TMP_DIR = getenv("TMP_DIR", path.join(getcwd(), "..", "temp"))
+DEVELOPMENT = getenv("ENVIRONMENT", "development")
+
+TMP_DIR = gettempdir() if  DEVELOPMENT != "development" else path.join(getcwd(), "..", "temp")
