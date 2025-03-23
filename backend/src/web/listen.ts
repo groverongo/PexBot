@@ -11,7 +11,7 @@ const voiceAudioStream = (receiver: VoiceReceiver, userId: string, outPath: stri
     const receiveStream = receiver.subscribe(userId, {
         end: {
             behavior: EndBehaviorType.AfterSilence,
-            duration: 3000
+            duration: 5000
         }
     });
 
@@ -44,8 +44,8 @@ export const listenVoice = (message: OmitPartialGroupDMChannel<Message<boolean>>
 
     receiver.speaking.on('start', async (userId) => {
         if(userId === client.user?.id) return;
-        console.log(`User ${userId} is speaking`);
         if (userId === message.member?.id) {
+            console.log(`User ${userId} is speaking`);
             outPrefix = randomUUID();
             outPath = path.join(OUT_DIRECTORY, `${outPrefix}.pcm`);
             audioPromise = voiceAudioStream(receiver, userId, outPath);
@@ -53,8 +53,8 @@ export const listenVoice = (message: OmitPartialGroupDMChannel<Message<boolean>>
     });
 
     receiver.speaking.on("end", async (userId) => {
-        console.log(`User ${userId} has stopped speaking.`);
         if (userId === message.member?.id) {
+            console.log(`User ${userId} has stopped speaking.`);
             await audioPromise;
             const transcriptClient =  new TranscriptionRequest()
             await transcriptClient.transcribe(outPath);
