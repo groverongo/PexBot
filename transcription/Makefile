@@ -8,7 +8,7 @@ start:
 	$(FAST_API) run $(SERVER_FILE)
 
 start\:dev:
-	$(FAST_API) dev $(SERVER_FILE) --port 8001
+	export $(shell cat .env | xargs) && $(FAST_API) dev $(SERVER_FILE) --port 8001
 
 export:
 	conda env export | grep -v "^prefix: " > environment.yml
