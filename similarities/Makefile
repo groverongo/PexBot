@@ -1,6 +1,6 @@
 FAST_API = fastapi
 SERVER_FILE = src/main.py
-ENV_NAME = PexBot-transcription
+ENV_NAME = PexBot-similarity
 
 DOCKER_IMAGE_NAME = PexBot/api
 
@@ -8,7 +8,7 @@ start:
 	$(FAST_API) run $(SERVER_FILE)
 
 start\:dev:
-	export $(shell cat .env | xargs) && $(FAST_API) dev $(SERVER_FILE) --port 8001
+	export $(shell cat .env | xargs) && $(FAST_API) dev $(SERVER_FILE) --port 8002
 
 export:
 	conda env export | grep -v "^prefix: " > environment.yml

@@ -1,9 +1,10 @@
 import axios from "axios";
 import { ModelResponseSchema, ModelResponseType } from "../schema/model";
-import { MODEL_ENDPOINT, TRANSCRIPTION_ENDPOINT } from "../constant";
+import { MODEL_ENDPOINT, SIMILARITY_ENDPOINT, TRANSCRIPTION_ENDPOINT } from "../constant";
 import { TranscriptionResponseSchema, TranscriptionResponseType } from "../schema/transcription";
 import FormData from "form-data";
 import { createReadStream } from 'fs';
+import { SimilarityResponseSchema, SimilarityResponseType } from "../schema/similarity";
 
 abstract class BaseServiceRequest<ResponseType>{
     private _response: ResponseType | null = null;
@@ -58,6 +59,27 @@ export class TranscriptionRequest extends BaseServiceRequest<TranscriptionRespon
 
         const response = await axios.post(`${this.ENDPOINT}/transcribe`, formData);
         const data = TranscriptionResponseSchema.safeParse(response.data);
+        if(data.success) {
+            this.response = data.data;
+        } else {
+            throw new Error(data.error.message);
+        }
+    }
+}
+
+export class SimilarityRequest extends BaseServiceRequest<SimilarityResponseType>{
+    
+    protected ENDPOINT: string = SIMILARITY_ENDPOINT;
+
+    public getSimilarity = async (text: string) => {
+        const response = await axios.post(
+            `${this.ENDPOINT}/action`, 
+            {
+                text
+            }
+        );
+
+        const data = SimilarityResponseSchema.safeParse(response.data);
         if(data.success) {
             this.response = data.data;
         } else {
