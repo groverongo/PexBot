@@ -17,7 +17,9 @@ class Sentence_Similarity(metaclass=Sentence_Similarity_Meta):
     ACTIONS = {
         "anthem-rock": 'Reproduce una canción de rock',
         "anthem-pop": 'Reproduce una canción de pop',
-        "music": 'Reproduce musica',
+        "music": 'Reproduce música',
+        "pause": 'Pausa la música',
+        "quit": "Abandona el servidor"
     }
 
     def __init__(self):
