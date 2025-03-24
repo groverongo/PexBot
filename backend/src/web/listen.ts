@@ -5,7 +5,7 @@ import { opus } from "prism-media";
 import { createWriteStream } from 'fs';
 import path from "path";
 import { randomUUID } from "crypto";
-import { SimilarityRequest, TranscriptionRequest } from "./request.";
+import { ModelRequest, SimilarityRequest, TranscriptionRequest } from "./request.";
 
 const voiceAudioStream = (receiver: VoiceReceiver, userId: string, outPath: string) => new Promise<void>((resolve, reject) => {
     const receiveStream = receiver.subscribe(userId, {
@@ -58,12 +58,21 @@ export const listenVoice = (message: OmitPartialGroupDMChannel<Message<boolean>>
             await audioPromise;
             const transcriptClient =  new TranscriptionRequest()
             await transcriptClient.transcribe(outPath);
+
+            const transcriptText = transcriptClient.response.response.text;
     
-            console.log("User", userId, "said:",transcriptClient.response.response.text);
+            console.log("User", userId, "said:",transcriptText);
 
             const similarityClient = new SimilarityRequest();
-            await similarityClient.getSimilarity(transcriptClient.response.response.text);
+            await similarityClient.getSimilarity(transcriptText);
             console.log("Similarity scores:", similarityClient.response.response);
+
+            return;
+            const messageClient = new ModelRequest();
+            await messageClient.generateModel(transcriptText);
+            console.log("Generated response:", messageClient.response.response);
+
+            message.channel.send(messageClient.response.response);
         }
     });
 }
